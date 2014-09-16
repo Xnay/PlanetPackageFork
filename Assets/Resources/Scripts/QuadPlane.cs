@@ -332,19 +332,24 @@ public class QuadPlane : MonoBehaviour
 		if ((mPlanet.DistanceFromCamera.magnitude < 1.025f * mPlanet.radius)) 
 		{
 			fromground = true;
-			SetRenderMaterial(mPlanet.GroundFromGroundMaterial);
+			SetRenderMaterial(mPlanet.GroundFromGroundMaterial, false);
 		}
 
 		if ((mPlanet.DistanceFromCamera.magnitude > 1.025f * mPlanet.radius)) 
 		{
 			fromground = false;
-			SetRenderMaterial(mPlanet.GroundFromSpaceMaterial);
+			SetRenderMaterial(mPlanet.GroundFromSpaceMaterial, false);
 		}
 
 		testmat = true;
 
 		CalculatePositions();
 		Scale(mScaleFactor);
+
+		renderer.material.SetFloat ("_MultTest", (4096) / (Mathf.Pow (2, timesSplit)));
+		renderer.material.SetTexture ("_DetailTex", PlanetUtilityComponent.Instance.BumpTexture);
+		renderer.material.SetTexture ("_DetailTex2", PlanetUtilityComponent.Instance.GBumpTexture);
+
 		Spherify(mPlanet.radius, mPlanet.NoiseComponent.Noise);
 		
 		Vector3 grelativePos = transform.TransformPoint (mMesh.vertices [60]) - transform.parent.position;
@@ -464,11 +469,11 @@ public class QuadPlane : MonoBehaviour
 					
 					if ((mPlanet.DistanceFromCamera.magnitude > 1.025f * mPlanet.radius)) 
 					{
-						SetRenderMaterial(mPlanet.GroundFromSpaceMaterial);
+						SetRenderMaterial(mPlanet.GroundFromSpaceMaterial, true);
 					} 
 					else 
 					{
-						SetRenderMaterial(mPlanet.GroundFromGroundMaterial);
+						SetRenderMaterial(mPlanet.GroundFromGroundMaterial, true);
 					}
 				
 					mParent.gameObject.SetActive(true);
@@ -483,24 +488,26 @@ public class QuadPlane : MonoBehaviour
 			{
 				fromground = true;
 
-				SetRenderMaterial(mPlanet.GroundFromGroundMaterial);
+				SetRenderMaterial(mPlanet.GroundFromGroundMaterial, false);
 			}
 
 			if ((mPlanet.DistanceFromCamera.magnitude > 1.025f * mPlanet.radius) && fromground == true) 
 			{
 				fromground = false;
 
-				SetRenderMaterial(mPlanet.GroundFromSpaceMaterial);
+				SetRenderMaterial(mPlanet.GroundFromSpaceMaterial, false);
 			}
 		}
 	}
 
-	private void SetRenderMaterial(Material material)
+	private void SetRenderMaterial(Material material, bool parent)
 	{
 		renderer.material = material;
 
-		mParent.renderer.material.SetTexture("_DetailTex", PlanetUtilityComponent.Instance.BumpTexture);
-		mParent.renderer.material.SetTexture("_DetailTex2", PlanetUtilityComponent.Instance.GBumpTexture);
-		mParent.renderer.material.SetFloat("_MultTest", (4096) / (Mathf.Pow (2, timesSplit - 1)));
+		QuadPlane plane = parent ? mParent : this;
+
+		plane.renderer.material.SetTexture("_DetailTex", PlanetUtilityComponent.Instance.BumpTexture);
+		plane.renderer.material.SetTexture("_DetailTex2", PlanetUtilityComponent.Instance.GBumpTexture);
+		plane.renderer.material.SetFloat("_MultTest", (4096) / (Mathf.Pow (2, timesSplit - 1)));
 	}
 }
