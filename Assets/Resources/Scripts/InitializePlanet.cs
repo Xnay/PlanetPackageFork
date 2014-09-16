@@ -19,25 +19,15 @@ public class InitializePlanet : MonoBehaviour
 	//Camera Stuff
 	public Transform camTransform;
 	float cameraDistance;
-	
-	//Quad properties and values
-	GameObject q1;
-	GameObject q2;
-	GameObject q3;
-	GameObject q4;
-	GameObject q5;
-	GameObject q6;
+
 	float scalar;
-	QuadPlane q1s;
-	QuadPlane q2s;
-	QuadPlane q3s;
-	QuadPlane q4s;
-	QuadPlane q5s;
-	QuadPlane q6s;
 	
 	GameObject planeObject;
 
 	public PlanetNoiseComponent mNoiseComponent;
+
+	private GameObject[] mQuads;
+	private QuadPlane[] mPlanes;
 	
 	//Atmospheric Scattering Variables
 	public GameObject m_sun;
@@ -140,8 +130,8 @@ public class InitializePlanet : MonoBehaviour
 		float z = transform.position.z;
 		scalar = 5 / radius;
 
-		GameObject[] quads = { q1, q2, q3, q4, q5, q6 };
-		QuadPlane[] planes = { q1s, q2s, q3s, q4s, q5s, q6s };
+		GameObject[] quads = new GameObject[6];
+		QuadPlane[] planes = new QuadPlane[6];
 		Vector3[] positions = { new Vector3 (x + radius, y, z), new Vector3 (x, y, z + radius), new Vector3 (x, y, z - radius), new Vector3 (x, y + radius, z),
 			new Vector3 (x, y - radius, z), new Vector3 (x - radius, y, z)};
 		Quaternion[] rotations = { Quaternion.Euler (0, 0, 270), Quaternion.Euler (90, 0, 0), Quaternion.Euler (270, 0, 0), Quaternion.Euler (0, 0, 0), 

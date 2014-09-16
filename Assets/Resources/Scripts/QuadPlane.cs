@@ -20,21 +20,11 @@ public class QuadPlane : MonoBehaviour
 	public float rad = 5f;
 	public float scaleFactor = 1f;
 	Mesh qMesh;
-	
-	GameObject q1;
-	GameObject q2;
-	GameObject q3;
-	GameObject q4;
-	
-	QuadPlane q1s;
-	QuadPlane q2s;
-	QuadPlane q3s;
-	QuadPlane q4s;
-	
-	public Vector3 q1pos;
-	public Vector3 q2pos;
-	public Vector3 q3pos;
-	public Vector3 q4pos;
+
+	private GameObject[] mQuads;
+	private QuadPlane[] mPlanes;
+	public Vector3[] mQuadPositions;
+	private GameObject[] mSiblings;
 	
 	public bool keepx = false;
 	public bool keepy = false;
@@ -65,10 +55,6 @@ public class QuadPlane : MonoBehaviour
 	public Color lowhold;
 	
 	GameObject cameras;
-	
-	GameObject sq1;
-	GameObject sq2;
-	GameObject sq3;
 	
 	public bool render = true;
 	
@@ -111,6 +97,11 @@ public class QuadPlane : MonoBehaviour
 	{
 		cameras = GameObject.FindGameObjectWithTag ("MainCamera");
 		rotation = transform.rotation;
+
+		mQuads = new GameObject[4];
+		mPlanes = new QuadPlane[4];
+		mQuadPositions = new Vector3[4];
+		mSiblings = new GameObject[4];
 	}
 
 	public void CalculatePositions()
@@ -121,29 +112,29 @@ public class QuadPlane : MonoBehaviour
 		if (keepx == true) 
 		{ 
 			//Quad is on the x plane				
-			q1pos = new Vector3 (transform.position.x, transform.position.y + mod, transform.position.z + mod);
-			q2pos = new Vector3 (transform.position.x, transform.position.y - mod, transform.position.z + mod);
-			q3pos = new Vector3 (transform.position.x, transform.position.y - mod, transform.position.z - mod);
-			q4pos = new Vector3 (transform.position.x, transform.position.y + mod, transform.position.z - mod);
+			mQuadPositions[0] = new Vector3 (transform.position.x, transform.position.y + mod, transform.position.z + mod);
+			mQuadPositions[1] = new Vector3 (transform.position.x, transform.position.y - mod, transform.position.z + mod);
+			mQuadPositions[2] = new Vector3 (transform.position.x, transform.position.y - mod, transform.position.z - mod);
+			mQuadPositions[3] = new Vector3 (transform.position.x, transform.position.y + mod, transform.position.z - mod);
 		}
 		
 		if (keepy == true) 
 		{ 
 			//Quad is on the x plane				
-			q1pos = new Vector3 (transform.position.x + mod, transform.position.y, transform.position.z + mod);
-			q2pos = new Vector3 (transform.position.x - mod, transform.position.y, transform.position.z + mod);
-			q3pos = new Vector3 (transform.position.x - mod, transform.position.y, transform.position.z - mod);
-			q4pos = new Vector3 (transform.position.x + mod, transform.position.y, transform.position.z - mod);
+			mQuadPositions[0] = new Vector3 (transform.position.x + mod, transform.position.y, transform.position.z + mod);
+			mQuadPositions[1] = new Vector3 (transform.position.x - mod, transform.position.y, transform.position.z + mod);
+			mQuadPositions[2] = new Vector3 (transform.position.x - mod, transform.position.y, transform.position.z - mod);
+			mQuadPositions[3] = new Vector3 (transform.position.x + mod, transform.position.y, transform.position.z - mod);
 		}
 		
 		if (keepz == true) 
 		{ 
 			//Quad is on the x plane
 				
-			q1pos = new Vector3 (transform.position.x + mod, transform.position.y + mod, transform.position.z);
-			q2pos = new Vector3 (transform.position.x - mod, transform.position.y + mod, transform.position.z);
-			q3pos = new Vector3 (transform.position.x - mod, transform.position.y - mod, transform.position.z);
-			q4pos = new Vector3 (transform.position.x + mod, transform.position.y - mod, transform.position.z);
+			mQuadPositions[0] = new Vector3 (transform.position.x + mod, transform.position.y + mod, transform.position.z);
+			mQuadPositions[1] = new Vector3 (transform.position.x - mod, transform.position.y + mod, transform.position.z);
+			mQuadPositions[2] = new Vector3 (transform.position.x - mod, transform.position.y - mod, transform.position.z);
+			mQuadPositions[3] = new Vector3 (transform.position.x + mod, transform.position.y - mod, transform.position.z);
 		}		
 		
 		if (keepx == false && keepy == false && keepz == false) 
@@ -154,10 +145,10 @@ public class QuadPlane : MonoBehaviour
 				//Quad is on the x plane
 				keepx = true;
 
-				q1pos = new Vector3 (transform.position.x, transform.position.y + mod, transform.position.z + mod);
-				q2pos = new Vector3 (transform.position.x, transform.position.y - mod, transform.position.z + mod);
-				q3pos = new Vector3 (transform.position.x, transform.position.y - mod, transform.position.z - mod);
-				q4pos = new Vector3 (transform.position.x, transform.position.y + mod, transform.position.z - mod);		
+				mQuadPositions[0] = new Vector3 (transform.position.x, transform.position.y + mod, transform.position.z + mod);
+				mQuadPositions[1] = new Vector3 (transform.position.x, transform.position.y - mod, transform.position.z + mod);
+				mQuadPositions[2] = new Vector3 (transform.position.x, transform.position.y - mod, transform.position.z - mod);
+				mQuadPositions[3] = new Vector3 (transform.position.x, transform.position.y + mod, transform.position.z - mod);		
 			}
 			
 			if (relativePos.y != 0) 
@@ -165,10 +156,10 @@ public class QuadPlane : MonoBehaviour
 				//Quad is on the x plane
 				keepy = true;
 
-				q1pos = new Vector3 (transform.position.x + mod, transform.position.y, transform.position.z + mod);
-				q2pos = new Vector3 (transform.position.x - mod, transform.position.y, transform.position.z + mod);
-				q3pos = new Vector3 (transform.position.x - mod, transform.position.y, transform.position.z - mod);
-				q4pos = new Vector3 (transform.position.x + mod, transform.position.y, transform.position.z - mod);
+				mQuadPositions[0] = new Vector3 (transform.position.x + mod, transform.position.y, transform.position.z + mod);
+				mQuadPositions[1] = new Vector3 (transform.position.x - mod, transform.position.y, transform.position.z + mod);
+				mQuadPositions[2] = new Vector3 (transform.position.x - mod, transform.position.y, transform.position.z - mod);
+				mQuadPositions[3] = new Vector3 (transform.position.x + mod, transform.position.y, transform.position.z - mod);
 			}
 			
 			if (relativePos.z != 0) 
@@ -176,10 +167,10 @@ public class QuadPlane : MonoBehaviour
 				//Quad is on the x plane
 				keepz = true;
 
-				q1pos = new Vector3 (transform.position.x + mod, transform.position.y + mod, transform.position.z);
-				q2pos = new Vector3 (transform.position.x - mod, transform.position.y + mod, transform.position.z);
-				q3pos = new Vector3 (transform.position.x - mod, transform.position.y - mod, transform.position.z);
-				q4pos = new Vector3 (transform.position.x + mod, transform.position.y - mod, transform.position.z);
+				mQuadPositions[0] = new Vector3 (transform.position.x + mod, transform.position.y + mod, transform.position.z);
+				mQuadPositions[1] = new Vector3 (transform.position.x - mod, transform.position.y + mod, transform.position.z);
+				mQuadPositions[2] = new Vector3 (transform.position.x - mod, transform.position.y - mod, transform.position.z);
+				mQuadPositions[3] = new Vector3 (transform.position.x + mod, transform.position.y - mod, transform.position.z);
 			}
 		}
 
@@ -298,148 +289,14 @@ public class QuadPlane : MonoBehaviour
 	{		
 		if (hasSplit == false) 
 		{
-			q1 = (GameObject)Instantiate (planeObject);
-			q1.transform.position = q1pos;
-			q1.transform.rotation = rotation;
-
-			q2 = (GameObject)Instantiate (planeObject);
-			q2.transform.position = q2pos;
-			q2.transform.rotation = rotation;
-
-			q3 = (GameObject)Instantiate (planeObject);
-			q3.transform.position = q3pos;
-			q3.transform.rotation = rotation;
-
-			q4 = (GameObject)Instantiate (planeObject);
-			q4.transform.position = q4pos;
-			q4.transform.rotation = rotation;
-		
-			q1s = (QuadPlane)q1.GetComponent(typeof(QuadPlane));
-			q2s = (QuadPlane)q2.GetComponent(typeof(QuadPlane));
-			q3s = (QuadPlane)q3.GetComponent(typeof(QuadPlane));
-			q4s = (QuadPlane)q4.GetComponent(typeof(QuadPlane));		
-
-			q1s.rad = rad;
-			q1s.scaleFactor = scaleFactor * 2;
-			q1s.keepx = keepx;
-			q1s.keepy = keepy;
-			q1s.keepz = keepz;
-			q1s.mod = (mod / 2);
-			q1s.noise = noise;
-			q1s.parent = gameObject;
-			q1s.cannotRevert = false;
-			q1s.noisemod = noisemod;
-			q1s.planetPos = planetPos;
-			q1s.lowhold = lowhold;	
-
-			q2s.rad = rad;
-			q2s.scaleFactor = scaleFactor * 2;
-			q2s.keepx = keepx;
-			q2s.keepy = keepy;
-			q2s.keepz = keepz;
-			q2s.mod = (mod / 2);
-			q2s.noise = noise;
-			q2s.parent = gameObject;
-			q2s.cannotRevert = false;
-			q2s.noisemod = noisemod;
-			q2s.planetPos = planetPos;
-			q2s.lowhold = lowhold;
-
-			q3s.rad = rad;
-			q3s.scaleFactor = scaleFactor * 2;
-			q3s.keepx = keepx;
-			q3s.keepy = keepy;
-			q3s.keepz = keepz;
-			q3s.mod = (mod / 2);
-			q3s.noise = noise;
-			q3s.parent = gameObject;
-			q3s.cannotRevert = false;
-			q3s.noisemod = noisemod;
-			q3s.planetPos = planetPos;
-			q3s.lowhold = lowhold;		
-		
-			q4s.rad = rad;
-			q4s.scaleFactor = scaleFactor * 2;
-			q4s.keepx = keepx;
-			q4s.keepy = keepy;
-			q4s.keepz = keepz;
-			q4s.mod = (mod / 2);
-			q4s.noise = noise;
-			q4s.parent = gameObject;
-			q4s.cannotRevert = false;
-			q4s.noisemod = noisemod;
-			q4s.planetPos = planetPos;
-			q4s.lowhold = lowhold;		
-			
-			q1s.sq1 = q2;
-			q1s.sq2 = q3;
-			q1s.sq3 = q4;
-			
-			q2s.sq1 = q1;
-			q2s.sq2 = q3;
-			q2s.sq3 = q4;
-			
-			q3s.sq1 = q1;
-			q3s.sq2 = q2;
-			q3s.sq3 = q4;
-			
-			q4s.sq1 = q1;
-			q4s.sq2 = q2;
-			q4s.sq3 = q3;
-			
-			q1s.m_sun = m_sun;
-			q2s.m_sun = m_sun;
-			q3s.m_sun = m_sun;
-			q4s.m_sun = m_sun;
-			
-			q1s.groundfromspace = groundfromspace;
-			q2s.groundfromspace = groundfromspace;
-			q3s.groundfromspace = groundfromspace;
-			q4s.groundfromspace = groundfromspace;
-			
-			q1s.splitCount = splitCount;
-			q1s.timesSplit = timesSplit + 1;
-		
-			q2s.splitCount = splitCount;
-			q2s.timesSplit = timesSplit + 1;
-	
-			q3s.splitCount = splitCount;
-			q3s.timesSplit = timesSplit + 1;
-		
-			q4s.splitCount = splitCount;
-			q4s.timesSplit = timesSplit + 1;
-			
-			q1s.planetMaker = planetMaker;
-			q2s.planetMaker = planetMaker;
-			q3s.planetMaker = planetMaker;
-			q4s.planetMaker = planetMaker;
-	
-			q1.transform.parent = planetMaker.transform;
-			q2.transform.parent = planetMaker.transform;
-			q3.transform.parent = planetMaker.transform;
-			q4.transform.parent = planetMaker.transform;
-			
-			q1s.planeObject = planeObject;
-			q2s.planeObject = planeObject;
-			q3s.planeObject = planeObject;
-			q4s.planeObject = planeObject;
-			
-			q1s.groundFromGround = groundFromGround;
-			q2s.groundFromGround = groundFromGround;
-			q3s.groundFromGround = groundFromGround;
-			q4s.groundFromGround = groundFromGround;
-			
-			q1s.planetInit = planetInit;
-			q2s.planetInit = planetInit;
-			q3s.planetInit = planetInit;
-			q4s.planetInit = planetInit;		
+			CreateQuads();
 		} 
 		else 
-		{ 
-			q1.SetActive(true);
-			q2.SetActive(true);
-			q3.SetActive(true);
-			q4.SetActive(true);
+		{
+			for (int i = 0; i < mQuads.Length; i++)
+			{
+				mQuads[i].SetActive(true);
+			}
 		}
 
 		hasSplit = true;		
@@ -452,129 +309,59 @@ public class QuadPlane : MonoBehaviour
 	{
 		renderer.enabled = false;
 		
-		q1 = (GameObject)Instantiate (planeObject);
-		q1.transform.position = q1pos;
-		q1.transform.rotation = rotation;
-		q2 = (GameObject)Instantiate (planeObject);
-		q2.transform.position = q2pos;
-		q2.transform.rotation = rotation;
-		q3 = (GameObject)Instantiate (planeObject);
-		q3.transform.position = q3pos;
-		q3.transform.rotation = rotation;
-		q4 = (GameObject)Instantiate (planeObject);
-		q4.transform.position = q4pos;
-		q4.transform.rotation = rotation;
-		
-		q1s = (QuadPlane)q1.GetComponent (typeof(QuadPlane));
-		q2s = (QuadPlane)q2.GetComponent (typeof(QuadPlane));
-		q3s = (QuadPlane)q3.GetComponent (typeof(QuadPlane));
-		q4s = (QuadPlane)q4.GetComponent (typeof(QuadPlane));
-
-		q1s.rad = rad;
-		q1s.scaleFactor = scaleFactor * 2;
-		q1s.keepx = keepx;
-		q1s.keepy = keepy;
-		q1s.keepz = keepz;
-		q1s.mod = (mod / 2);
-		q1s.noise = noise;
-		q1s.parent = gameObject;
-		q1s.cannotRevert = true;
-		q1s.noisemod = noisemod;
-		q1s.planetPos = planetPos;
-		q1s.lowhold = lowhold;
-		q1s.hasOcean = hasOcean;
-
-		q2s.rad = rad;
-		q2s.scaleFactor = scaleFactor * 2;
-		q2s.keepx = keepx;
-		q2s.keepy = keepy;
-		q2s.keepz = keepz;
-		q2s.mod = (mod / 2);
-		q2s.noise = noise;
-		q2s.parent = gameObject;
-		q2s.cannotRevert = true;
-		q2s.noisemod = noisemod;
-		q2s.planetPos = planetPos;
-		q2s.lowhold = lowhold;
-		q2s.hasOcean = hasOcean;
-
-		q3s.rad = rad;
-		q3s.scaleFactor = scaleFactor * 2;
-		q3s.keepx = keepx;
-		q3s.keepy = keepy;
-		q3s.keepz = keepz;
-		q3s.mod = (mod / 2);
-		q3s.noise = noise;
-		q3s.parent = gameObject;
-		q3s.cannotRevert = true;
-		q3s.noisemod = noisemod;
-		q3s.planetPos = planetPos;
-		q3s.lowhold = lowhold;
-		q3s.hasOcean = hasOcean;
-		
-		q4s.rad = rad;
-		q4s.scaleFactor = scaleFactor * 2;
-		q4s.keepx = keepx;
-		q4s.keepy = keepy;
-		q4s.keepz = keepz;
-		q4s.mod = (mod / 2);
-		q4s.noise = noise;
-		q4s.parent = gameObject;
-		q4s.cannotRevert = true;
-		q4s.noisemod = noisemod;
-		q4s.planetPos = planetPos;
-		q4s.lowhold = lowhold;
-		q4s.hasOcean = hasOcean;
-		
-		q1s.m_sun = m_sun;
-		q2s.m_sun = m_sun;
-		q3s.m_sun = m_sun;
-		q4s.m_sun = m_sun;
-		
-		q1s.groundfromspace = groundfromspace;
-		q2s.groundfromspace = groundfromspace;
-		q3s.groundfromspace = groundfromspace;
-		q4s.groundfromspace = groundfromspace;
-		
-		q1s.splitCount = splitCount;
-		q1s.timesSplit = timesSplit + 1;
-		
-		q2s.splitCount = splitCount;
-		q2s.timesSplit = timesSplit + 1;
-	
-		q3s.splitCount = splitCount;
-		q3s.timesSplit = timesSplit + 1;
-		
-		q4s.splitCount = splitCount;
-		q4s.timesSplit = timesSplit + 1;
-		
-		q1s.planetMaker = planetMaker;
-		q2s.planetMaker = planetMaker;
-		q3s.planetMaker = planetMaker;
-		q4s.planetMaker = planetMaker;
-	
-		q1.transform.parent = planetMaker.transform;
-		q2.transform.parent = planetMaker.transform;
-		q3.transform.parent = planetMaker.transform;
-		q4.transform.parent = planetMaker.transform;
-		
-		q1s.planeObject = planeObject;
-		q2s.planeObject = planeObject;
-		q3s.planeObject = planeObject;
-		q4s.planeObject = planeObject;
-		
-		q1s.groundFromGround = groundFromGround;
-		q2s.groundFromGround = groundFromGround;
-		q3s.groundFromGround = groundFromGround;
-		q4s.groundFromGround = groundFromGround;
-		
-		q1s.planetInit = planetInit;
-		q2s.planetInit = planetInit;
-		q3s.planetInit = planetInit;
-		q4s.planetInit = planetInit;
+		CreateQuads();
 
 		beginTesting = true;
 		gameObject.SetActive (false);
+	}
+
+	private void CreateQuads()
+	{
+		for (int i = 0; i < 4; i++)
+		{
+			mQuads[i] = (GameObject)Instantiate(planeObject);
+			mQuads[i].transform.position = mQuadPositions[i];
+			mQuads[i].transform.rotation = rotation;
+
+			mPlanes[i] = (QuadPlane)mQuads[i].GetComponent(typeof(QuadPlane));
+			mPlanes[i].rad = rad;
+			mPlanes[i].scaleFactor = scaleFactor * 2;
+			mPlanes[i].keepx = keepx;
+			mPlanes[i].keepy = keepy;
+			mPlanes[i].keepz = keepz;
+			mPlanes[i].mod = (mod / 2);
+			mPlanes[i].noise = noise;
+			mPlanes[i].parent = gameObject;
+			mPlanes[i].cannotRevert = false;
+			mPlanes[i].noisemod = noisemod;
+			mPlanes[i].planetPos = planetPos;
+			mPlanes[i].lowhold = lowhold;
+			mPlanes[i].m_sun = m_sun;
+			mPlanes[i].groundfromspace = groundfromspace;
+			mPlanes[i].splitCount = splitCount;
+			mPlanes[i].timesSplit = timesSplit + 1;
+			mPlanes[i].planetMaker = planetMaker;
+
+			mQuads[i].transform.parent = planetMaker.transform;
+
+			mPlanes[i].planeObject = planeObject;
+			mPlanes[i].groundFromGround = groundFromGround;
+			mPlanes[i].planetInit = planetInit;
+		}
+
+		for (int i = 0; i < mPlanes.Length; i++)
+		{
+			for (int j = 0; j < mPlanes[i].mSiblings.Length; j++)
+			{
+				for (int k = 0; k < mQuads.Length; k++)
+				{
+					if (i != k)
+					{
+						mPlanes[i].mSiblings[j] = mQuads[k];
+					}
+				}
+			}
+		}
 	}
 
 	void Start ()
@@ -724,9 +511,11 @@ public class QuadPlane : MonoBehaviour
 			{
 				if (cannotRevert == false) 
 				{
-					sq1.SetActive (false);	//deactivates sibling quads to remove "scanning" effect
-					sq2.SetActive (false);
-					sq3.SetActive (false);
+					//deactivates sibling quads to remove "scanning" effect
+					foreach (GameObject sibling in mSiblings)
+					{
+						sibling.SetActive(false);
+					}
 					
 					if (((cameras.transform.position - planetPos).magnitude > 1.025f * rad)) 
 					{
