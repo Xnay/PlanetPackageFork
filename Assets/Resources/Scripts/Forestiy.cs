@@ -16,7 +16,7 @@ public class Forestiy : MonoBehaviour {
 		for(int i = 0; i < treeCount; i++)
 		{
 			GameObject temptree = (GameObject) Instantiate(treeObject);
-			temptree.transform.position = planetInit.SurfacePoint(Random.Range(-90, 90), Random.Range(-180, 180), 0, planetInit.mNoiseComponent.Noise, planet);
+			temptree.transform.position = planetInit.SurfacePoint(Random.Range(-90, 90), Random.Range(-180, 180), 0, planetInit.NoiseComponent.Noise, planet);
 			Vector3 v3 = temptree.transform.position - planet.transform.position;
     		temptree.transform.rotation = Quaternion.FromToRotation(transform.up, v3) * transform.rotation;
 			temptree.transform.localScale = new Vector3(treescale, treescale, treescale);

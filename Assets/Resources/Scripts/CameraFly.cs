@@ -4,7 +4,6 @@ using System.Collections;
 public class CameraFly : MonoBehaviour {
 
 	// Use this for initialization
-	Transform camTransform;
 	public float speed = 10f;
 	public float boostspeed = 100f;
 	float rotateSpeed = 60f;
@@ -12,7 +11,6 @@ public class CameraFly : MonoBehaviour {
 	float maxShift;
 	void Awake()
 	{
-		camTransform = gameObject.transform;
 		maxShift = boostspeed * 10f;
 		
 		

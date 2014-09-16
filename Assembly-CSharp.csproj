@@ -85,9 +85,11 @@
      <Compile Include="Assets\Resources\Scripts\InitializePlanet.cs" />
      <Compile Include="Assets\Resources\Scripts\ObjectPositioningTest.cs" />
      <Compile Include="Assets\Resources\Scripts\PlanetNoiseComponent.cs" />
+     <Compile Include="Assets\Resources\Scripts\PlanetUtilityComponent.cs" />
      <Compile Include="Assets\Resources\Scripts\QuadPlane.cs" />
      <Compile Include="Assets\Resources\Scripts\QuadTree.cs" />
      <Compile Include="Assets\Resources\Scripts\ReconcilerTester.cs" />
+     <Compile Include="Assets\Resources\Scripts\SingletonBehavior.cs" />
      <Compile Include="Assets\Resources\Scripts\TextureGenerator.cs" />
      <Compile Include="Assets\Resources\Scripts\TextureScale.cs" />
      <None Include="Assets\Resources\Shaders\DiffuseTex.shader" />

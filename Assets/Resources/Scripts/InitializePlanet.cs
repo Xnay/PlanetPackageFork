@@ -21,16 +21,13 @@ public class InitializePlanet : MonoBehaviour
 	float cameraDistance;
 
 	float scalar;
-	
-	GameObject planeObject;
 
-	public PlanetNoiseComponent mNoiseComponent;
+	private PlanetNoiseComponent mNoiseComponent;
 
 	private GameObject[] mQuads;
 	private QuadPlane[] mPlanes;
 	
 	//Atmospheric Scattering Variables
-	public GameObject m_sun;
 	public Material m_groundMaterial;
 	public Material m_skyGroundMaterial;
 	public Material m_skySpaceMaterial;
@@ -62,11 +59,41 @@ public class InitializePlanet : MonoBehaviour
 	// Radius of the sky sphere
 	private float m_scaleDepth = 0.25f;
 	// The scale depth (i.e. the altitude at which the atmosphere's average density is found)
+
+	public PlanetNoiseComponent NoiseComponent
+	{
+		get { return mNoiseComponent; }
+	}
+
+	public Vector3 Position
+	{
+		get { return transform.position; }
+	}
+
+	public Vector3 DistanceFromCamera
+	{
+		get { return PlanetUtilityComponent.Instance.CameraPosition - Position; }
+	}
+
+	public float ScaleFactor
+	{
+		get { return 5 / radius; }
+	}
+
+	public Material GroundFromGroundMaterial
+	{
+		get { return m_groundfromgroundMaterial; }
+	}
+
+	public Material GroundFromSpaceMaterial
+	{
+		get { return m_groundMaterial; }
+	}
 	
 	void Awake ()
 	{
 		planetPosition = gameObject.transform.position;
-		camTransform = GameObject.FindGameObjectWithTag ("MainCamera").transform;
+		camTransform = GameObject.FindGameObjectWithTag("MainCamera").transform;
 		mNoiseComponent = gameObject.AddComponent<PlanetNoiseComponent>();
 	}
 
@@ -82,8 +109,6 @@ public class InitializePlanet : MonoBehaviour
 		spoint.y = (rad * Mathf.Sin (lat));
 		spoint.z = (rad * Mathf.Cos (lat) * Mathf.Sin (lon));
 		spoint = spoint + planetObject.transform.position;
-
-		Vector3 trueplanetPos = spoint - planetPosition;
 		 
 		raddif = (float)noi.GetValue (spoint);
 
@@ -103,7 +128,6 @@ public class InitializePlanet : MonoBehaviour
 	
 	void Start()
 	{
-		m_sun = GameObject.Find ("Sunlight");
 		m_innerRadius = radius;
 		m_outerRadius = m_innerRadius * m_outerScaleFactor;	
 		
@@ -122,42 +146,33 @@ public class InitializePlanet : MonoBehaviour
 
 	private void CreateQuads ()
 	{
-		planeObject = (GameObject)Resources.Load ("Prefabs/QuadPlane");
-		
-		m_sun = GameObject.Find ("Sunlight");
 		float x = transform.position.x;
 		float y = transform.position.y;
 		float z = transform.position.z;
 		scalar = 5 / radius;
 
-		GameObject[] quads = new GameObject[6];
-		QuadPlane[] planes = new QuadPlane[6];
+		mQuads = new GameObject[6];
+		mPlanes = new QuadPlane[6];
 		Vector3[] positions = { new Vector3 (x + radius, y, z), new Vector3 (x, y, z + radius), new Vector3 (x, y, z - radius), new Vector3 (x, y + radius, z),
 			new Vector3 (x, y - radius, z), new Vector3 (x - radius, y, z)};
 		Quaternion[] rotations = { Quaternion.Euler (0, 0, 270), Quaternion.Euler (90, 0, 0), Quaternion.Euler (270, 0, 0), Quaternion.Euler (0, 0, 0), 
 			Quaternion.Euler (0, 0, 180), Quaternion.Euler (0, 0, 90)};
 
-		for (int i = 0; i < quads.Length; i++)
+		for (int i = 0; i < mQuads.Length; i++)
 		{
-			GameObject quad = quads[i];
-			QuadPlane plane = planes[i];
+			GameObject quad = mQuads[i];
+			QuadPlane plane = mPlanes[i];
 
-			quad = (GameObject)Instantiate(planeObject);
+			quad = (GameObject)Instantiate(PlanetUtilityComponent.Instance.PlanePrefab);
 			quad.transform.position = positions[i];
 			quad.transform.rotation = rotations[i];
 
 			plane = (QuadPlane)quad.GetComponent (typeof(QuadPlane));
-			plane.scaleFactor = scalar;
-			plane.rad = radius;
+			plane.ScaleFactor = scalar;
 			plane.mod = (radius / 2);
-			plane.noise = mNoiseComponent.Noise;
 			plane.cannotRevert = true;
-			plane.noisemod = 1; //TODO: replace with noisemod from mnoisecomponent
-			plane.planetPos = transform.position;
-			plane.hasOcean = hasOcean;
 			plane.name = "q" + i.ToString();
-			plane.groundfromspace = m_groundMaterial;
-			plane.m_sun = m_sun;
+			plane.mPlanet = this;
 
 			plane.CalculatePositions();
 
@@ -167,11 +182,6 @@ public class InitializePlanet : MonoBehaviour
 			plane.timesSplit = 0;
 
 			quad.transform.parent = gameObject.transform;
-
-			plane.planetMaker = gameObject;
-			plane.planeObject = planeObject;
-			plane.groundFromGround = m_groundfromgroundMaterial;
-			plane.planetInit = this;
 		}
 	}
 
@@ -237,12 +247,6 @@ public class InitializePlanet : MonoBehaviour
 
 	private void CreateAtmosphere()
 	{
-		m_sun = GameObject.Find("Sunlight");
-
-		Shader groundfromSpace = Shader.Find("Atmosphere/GroundFromSpace");
-		Shader skyFromSpace = Shader.Find("Atmosphere/SkyFromSpace");
-		Shader skyFromGround = Shader.Find("Atmosphere/SkyFromAtmosphere");
-		
 		m_skyGroundMaterial = new Material(Shader.Find("Atmosphere/SkyFromAtmosphere"));
 		m_skySpaceMaterial = new Material(Shader.Find("Atmosphere/SkyFromSpace"));
 		m_groundMaterial = new Material(Shader.Find("Atmosphere/GroundFromSpace"));
@@ -275,7 +279,7 @@ public class InitializePlanet : MonoBehaviour
 		
 		mat.SetVector("_ColorShift", cshift);
 		mat.SetVector("_PlanetPos", planetPosition);
-		mat.SetVector("v3LightPos", m_sun.transform.forward * -1.0f);
+		mat.SetVector("v3LightPos", PlanetUtilityComponent.Instance.Sun.transform.forward * -1.0f);
 		mat.SetVector("v3InvWavelength", invWaveLength4);
 		mat.SetFloat("fOuterRadius", m_outerRadius);
 		mat.SetFloat("fOuterRadius2", m_outerRadius * m_outerRadius);

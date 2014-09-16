@@ -17,7 +17,7 @@ public class ObjectPositioningTest : MonoBehaviour
 
 	void Update ()
 	{
-		transform.position = planetInit.SurfacePoint(latitude, longitude, offset, planetInit.mNoiseComponent.Noise, planet);
+		transform.position = planetInit.SurfacePoint(latitude, longitude, offset, planetInit.NoiseComponent.Noise, planet);
 
 		Vector3 v3 = transform.position - planet.transform.position;
 		transform.rotation = Quaternion.FromToRotation (transform.up, v3) * transform.rotation;

@@ -16,7 +16,6 @@ public class ReconcilerTester : MonoBehaviour {
 	{
 		Vector3[] vertices = qMesh.vertices;
 		Vector3[] verticesN = qMesh.vertices;
-		Vector3[] normals = qMesh.normals;
 		Vector3[] truevpos = qMesh.vertices;
 		
 		

@@ -38,10 +38,7 @@ public class PlanetNoiseComponent : MonoBehaviour
 		Perlin perlinNoise = new Perlin();
 		perlinNoise.Frequency = 2.0f;
 
-		Scale scaledVoronoiNoise = new Scale(ScalarV, ScalarV, ScalarV, voronoiNoise);
-		Scale scaledPerlinNoise = new Scale(ScalarV, ScalarV, ScalarV, perlinNoise);
 		ScaleBias flatTerrain = new ScaleBias(0.125, -0.75, mBaseFlatTerrain);
-		Select noiseSelect = new Select(scaledPerlinNoise, scaledVoronoiNoise, mTerrainType);
 
 		Select terrainSelector = new Select(flatTerrain, mMountainTerrain, mTerrainType);
 		terrainSelector.SetBounds(0.0, 1000.0);
