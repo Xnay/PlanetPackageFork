@@ -24,9 +24,12 @@ public class QuadPlane : MonoBehaviour
 
 	private bool mHasSplit = false;
 
+	private float mLatitude;
+	private float mLongitude;
+
 
 	// Use this for initialization
-	bool beginTesting = false;
+	private bool beginTesting = false;
 	
 	public bool keepx = false;
 	public bool keepy = false;
@@ -47,11 +50,6 @@ public class QuadPlane : MonoBehaviour
 	public bool splitAgain = false;
 	
 	public float camTimeWithin = 0;
-	
-	public bool isLoaded = false;
-	
-	public float latitude = 0;
-	public float longitude = 0;
 	
 	public bool fromground;
 	public bool testmat;
@@ -75,7 +73,7 @@ public class QuadPlane : MonoBehaviour
 		mQuads = new GameObject[4];
 		mPlanes = new QuadPlane[4];
 		mQuadPositions = new Vector3[4];
-		mSiblings = new GameObject[4];
+		mSiblings = new GameObject[3];
 	}
 
 	public void CalculatePositions()
@@ -86,29 +84,29 @@ public class QuadPlane : MonoBehaviour
 		if (keepx == true) 
 		{ 
 			//Quad is on the x plane				
-			mQuadPositions[0] = new Vector3 (transform.position.x, transform.position.y + mod, transform.position.z + mod);
-			mQuadPositions[1] = new Vector3 (transform.position.x, transform.position.y - mod, transform.position.z + mod);
-			mQuadPositions[2] = new Vector3 (transform.position.x, transform.position.y - mod, transform.position.z - mod);
-			mQuadPositions[3] = new Vector3 (transform.position.x, transform.position.y + mod, transform.position.z - mod);
+			mQuadPositions[0] = new Vector3(transform.position.x, transform.position.y + mod, transform.position.z + mod);
+			mQuadPositions[1] = new Vector3(transform.position.x, transform.position.y - mod, transform.position.z + mod);
+			mQuadPositions[2] = new Vector3(transform.position.x, transform.position.y - mod, transform.position.z - mod);
+			mQuadPositions[3] = new Vector3(transform.position.x, transform.position.y + mod, transform.position.z - mod);
 		}
 		
 		if (keepy == true) 
 		{ 
 			//Quad is on the x plane				
-			mQuadPositions[0] = new Vector3 (transform.position.x + mod, transform.position.y, transform.position.z + mod);
-			mQuadPositions[1] = new Vector3 (transform.position.x - mod, transform.position.y, transform.position.z + mod);
-			mQuadPositions[2] = new Vector3 (transform.position.x - mod, transform.position.y, transform.position.z - mod);
-			mQuadPositions[3] = new Vector3 (transform.position.x + mod, transform.position.y, transform.position.z - mod);
+			mQuadPositions[0] = new Vector3(transform.position.x + mod, transform.position.y, transform.position.z + mod);
+			mQuadPositions[1] = new Vector3(transform.position.x - mod, transform.position.y, transform.position.z + mod);
+			mQuadPositions[2] = new Vector3(transform.position.x - mod, transform.position.y, transform.position.z - mod);
+			mQuadPositions[3] = new Vector3(transform.position.x + mod, transform.position.y, transform.position.z - mod);
 		}
 		
 		if (keepz == true) 
 		{ 
 			//Quad is on the x plane
 				
-			mQuadPositions[0] = new Vector3 (transform.position.x + mod, transform.position.y + mod, transform.position.z);
-			mQuadPositions[1] = new Vector3 (transform.position.x - mod, transform.position.y + mod, transform.position.z);
-			mQuadPositions[2] = new Vector3 (transform.position.x - mod, transform.position.y - mod, transform.position.z);
-			mQuadPositions[3] = new Vector3 (transform.position.x + mod, transform.position.y - mod, transform.position.z);
+			mQuadPositions[0] = new Vector3(transform.position.x + mod, transform.position.y + mod, transform.position.z);
+			mQuadPositions[1] = new Vector3(transform.position.x - mod, transform.position.y + mod, transform.position.z);
+			mQuadPositions[2] = new Vector3(transform.position.x - mod, transform.position.y - mod, transform.position.z);
+			mQuadPositions[3] = new Vector3(transform.position.x + mod, transform.position.y - mod, transform.position.z);
 		}		
 		
 		if (keepx == false && keepy == false && keepz == false) 
@@ -119,10 +117,10 @@ public class QuadPlane : MonoBehaviour
 				//Quad is on the x plane
 				keepx = true;
 
-				mQuadPositions[0] = new Vector3 (transform.position.x, transform.position.y + mod, transform.position.z + mod);
-				mQuadPositions[1] = new Vector3 (transform.position.x, transform.position.y - mod, transform.position.z + mod);
-				mQuadPositions[2] = new Vector3 (transform.position.x, transform.position.y - mod, transform.position.z - mod);
-				mQuadPositions[3] = new Vector3 (transform.position.x, transform.position.y + mod, transform.position.z - mod);		
+				mQuadPositions[0] = new Vector3(transform.position.x, transform.position.y + mod, transform.position.z + mod);
+				mQuadPositions[1] = new Vector3(transform.position.x, transform.position.y - mod, transform.position.z + mod);
+				mQuadPositions[2] = new Vector3(transform.position.x, transform.position.y - mod, transform.position.z - mod);
+				mQuadPositions[3] = new Vector3(transform.position.x, transform.position.y + mod, transform.position.z - mod);		
 			}
 			
 			if (relativePos.y != 0) 
@@ -130,10 +128,10 @@ public class QuadPlane : MonoBehaviour
 				//Quad is on the x plane
 				keepy = true;
 
-				mQuadPositions[0] = new Vector3 (transform.position.x + mod, transform.position.y, transform.position.z + mod);
-				mQuadPositions[1] = new Vector3 (transform.position.x - mod, transform.position.y, transform.position.z + mod);
-				mQuadPositions[2] = new Vector3 (transform.position.x - mod, transform.position.y, transform.position.z - mod);
-				mQuadPositions[3] = new Vector3 (transform.position.x + mod, transform.position.y, transform.position.z - mod);
+				mQuadPositions[0] = new Vector3(transform.position.x + mod, transform.position.y, transform.position.z + mod);
+				mQuadPositions[1] = new Vector3(transform.position.x - mod, transform.position.y, transform.position.z + mod);
+				mQuadPositions[2] = new Vector3(transform.position.x - mod, transform.position.y, transform.position.z - mod);
+				mQuadPositions[3] = new Vector3(transform.position.x + mod, transform.position.y, transform.position.z - mod);
 			}
 			
 			if (relativePos.z != 0) 
@@ -179,9 +177,9 @@ public class QuadPlane : MonoBehaviour
 		}
 	}
 	
-	void Scale (float scalefactor)
+	private void Scale(float scalefactor)
 	{
-		mMesh = GetComponent<MeshFilter> ().mesh;
+		mMesh = GetComponent<MeshFilter>().mesh;
 
 		Vector3[] vertices = mMesh.vertices;
 		Vector3[] verticesN = mMesh.vertices;
@@ -189,16 +187,16 @@ public class QuadPlane : MonoBehaviour
 		
 		for (int i = 0; i < vertices.Length; i++) 
 		{
-			truevpos [i] = transform.TransformPoint (vertices [i]);
-			verticesN [i] = vertices [i] / scalefactor;
+			truevpos[i] = transform.TransformPoint(vertices[i]);
+			verticesN[i] = vertices[i] / scalefactor;
 		}
 
 		mMesh.vertices = verticesN;
-		mMesh.RecalculateNormals ();
-		mMesh.RecalculateBounds ();
+		mMesh.RecalculateNormals();
+		mMesh.RecalculateBounds();
 	}
 
-	void Spherify (float radius, ModuleBase noi)
+	private void Spherify(float radius, ModuleBase noise)
 	{
 		Vector3[] vertices = mMesh.vertices;
 		Vector3[] verticesN = mMesh.vertices;
@@ -206,58 +204,58 @@ public class QuadPlane : MonoBehaviour
 		
 		for (int i = 0; i < vertices.Length; i++) 
 		{
-			truevpos [i] = (transform.TransformPoint (vertices [i])) - mPlanet.Position;			
-			verticesN [i] = (((truevpos [i].normalized) * (radius + (((float)noi.GetValue ((truevpos [i].normalized * radius) + mPlanet.Position)) * mPlanet.NoiseComponent.NoiseMod)))) - (relativePos);			
+			truevpos[i] = (transform.TransformPoint(vertices[i])) - mPlanet.Position;			
+			verticesN[i] = (((truevpos[i].normalized) * (radius + (((float)noise.GetValue((truevpos[i].normalized * radius) + mPlanet.Position)) * mPlanet.NoiseComponent.NoiseMod)))) - relativePos;			
 		}
 
-		transform.rotation = Quaternion.Euler (0, 0, 0);
+		transform.rotation = Quaternion.Euler(0, 0, 0);
 		mMesh.vertices = verticesN;
-		mMesh.RecalculateNormals ();
-		mMesh.RecalculateBounds ();
+		mMesh.RecalculateNormals();
+		mMesh.RecalculateBounds();
 	}
 
-	Texture2D AltGenTex (Vector3[] verts, ModuleBase module)
+	private Texture2D AltGenTex(Vector3[] vertices, ModuleBase noise)
 	{
-		Texture2D tex = new Texture2D ((int)Mathf.Sqrt (verts.Length), (int)Mathf.Sqrt (verts.Length));
-		Vector3[] interpolatedPoints = new Vector3[verts.Length];
+		Texture2D texture = new Texture2D((int)Mathf.Sqrt(vertices.Length), (int)Mathf.Sqrt(vertices.Length));
+		Vector3[] interpolatedPoints = new Vector3[vertices.Length];
 		
-		int reso = (int)Mathf.Sqrt (verts.Length);
-		int pixelx = 0;
-		int pixely = 0;
+		int reso = (int)Mathf.Sqrt(vertices.Length);
+		int pixelX = 0;
+		int pixelY = 0;		
 		
-		
-		for (int i = 0; i < verts.Length; i++) 
+		for (int i = 0; i < vertices.Length; i++) 
 		{
-			if (i < verts.Length - 1) 
+			if (i < vertices.Length - 1) 
 			{
-				interpolatedPoints [i] = ((verts [i] + verts [i + 1]) / 2);
+				interpolatedPoints[i] = ((vertices[i] + vertices[i + 1]) / 2);
 			}
 			
-			verts [i] = transform.TransformPoint (verts [i]) - mPlanet.Position;
+			vertices[i] = transform.TransformPoint(vertices[i]) - mPlanet.Position;
 
-			if (pixelx == reso) 
+			if (pixelX == reso) 
 			{
-				pixelx = 0;
-				pixely += 1;
+				pixelX = 0;
+				pixelY += 1;
 			}
 
-			float noiseval = (float)module.GetValue ((verts [i].normalized * mPlanet.radius) + mPlanet.Position);
-			noiseval = Mathf.Clamp ((noiseval + 0.5f) / 2f, 0f, 1f);
+			float noiseval = (float)noise.GetValue((vertices[i].normalized * mPlanet.radius) + mPlanet.Position);
+			noiseval = Mathf.Clamp((noiseval + 0.5f) / 2f, 0f, 1f);
 
-			Color pixelColor = new Color (noiseval, noiseval, noiseval, 0);
+			Color pixelColor = new Color(noiseval, noiseval, noiseval, 0);
 
-			tex.SetPixel (pixelx, pixely, pixelColor);
-			tex.Apply ();
+			texture.SetPixel(pixelX, pixelY, pixelColor);
+			texture.Apply();
 
-			pixelx += 1;
+			pixelX += 1;
 		}
 		
-		tex.wrapMode = TextureWrapMode.Clamp;
-		tex.Apply ();
-		return tex;
+		texture.wrapMode = TextureWrapMode.Clamp;
+		texture.Apply();
+
+		return texture;
 	}
 
-	void SplitQuad ()
+	private void SplitQuad()
 	{		
 		if (mHasSplit == false) 
 		{
@@ -274,17 +272,17 @@ public class QuadPlane : MonoBehaviour
 		mHasSplit = true;		
 		
 		beginTesting = true;
-		gameObject.SetActive (false);	
+		gameObject.SetActive(false);	
 	}
 
-	public void InitialSplit ()
+	public void InitialSplit()
 	{
 		renderer.enabled = false;
 		
 		CreateQuads();
 
 		beginTesting = true;
-		gameObject.SetActive (false);
+		gameObject.SetActive(false);
 	}
 
 	private void CreateQuads()
@@ -306,10 +304,9 @@ public class QuadPlane : MonoBehaviour
 			mPlanes[i].lowhold = lowhold;
 			mPlanes[i].splitCount = splitCount;
 			mPlanes[i].timesSplit = timesSplit + 1;
+			mPlanes[i].mPlanet = mPlanet;
 
 			mQuads[i].transform.parent = mPlanet.transform;
-
-			mPlanes[i].mPlanet = mPlanet;
 		}
 
 		for (int i = 0; i < mPlanes.Length; i++)
@@ -325,9 +322,25 @@ public class QuadPlane : MonoBehaviour
 				}
 			}
 		}
+
+		/*mPlanes[0].mSiblings[0] = mQuads[1];
+		mPlanes[0].mSiblings[1] = mQuads[2];
+		mPlanes[0].mSiblings[2] = mQuads[3];
+
+		mPlanes[1].mSiblings[0] = mQuads[0];
+		mPlanes[1].mSiblings[1] = mQuads[2];
+		mPlanes[1].mSiblings[2] = mQuads[3];
+
+		mPlanes[2].mSiblings[0] = mQuads[0];
+		mPlanes[2].mSiblings[1] = mQuads[1];
+		mPlanes[2].mSiblings[2] = mQuads[3];
+
+		mPlanes[3].mSiblings[0] = mQuads[0];
+		mPlanes[3].mSiblings[1] = mQuads[1];
+		mPlanes[3].mSiblings[2] = mQuads[2];*/
 	}
 
-	void Start ()
+	void Start()
 	{	
 		if ((mPlanet.DistanceFromCamera.magnitude < 1.025f * mPlanet.radius)) 
 		{
@@ -346,18 +359,18 @@ public class QuadPlane : MonoBehaviour
 		CalculatePositions();
 		Scale(mScaleFactor);
 
-		renderer.material.SetFloat ("_MultTest", (4096) / (Mathf.Pow (2, timesSplit)));
-		renderer.material.SetTexture ("_DetailTex", PlanetUtilityComponent.Instance.BumpTexture);
-		renderer.material.SetTexture ("_DetailTex2", PlanetUtilityComponent.Instance.GBumpTexture);
+		renderer.material.SetFloat("_MultTest", 4096 / (Mathf.Pow(2, timesSplit)));
+		renderer.material.SetTexture("_DetailTex", PlanetUtilityComponent.Instance.BumpTexture);
+		renderer.material.SetTexture("_DetailTex2", PlanetUtilityComponent.Instance.GBumpTexture);
 
 		Spherify(mPlanet.radius, mPlanet.NoiseComponent.Noise);
 		
-		Vector3 grelativePos = transform.TransformPoint (mMesh.vertices [60]) - transform.parent.position;
-		latitude = (Mathf.Asin (grelativePos.y / mPlanet.radius) * 180) / Mathf.PI;
-		float LAT = latitude * Mathf.PI / 180;
+		Vector3 grelativePos = transform.TransformPoint(mMesh.vertices[60]) - transform.parent.position;
+		mLatitude = (Mathf.Asin(grelativePos.y / mPlanet.radius) * 180) / Mathf.PI;
+		float LAT = mLatitude * Mathf.PI / 180;
 
-		float longitude1 = (180 * (Mathf.Asin ((grelativePos.z) / (mPlanet.radius * Mathf.Cos (LAT))))) / Mathf.PI;	//There are two possible solutions for longitude, compare these by re-entering them to the XYZ formula
-		float longitude2 = (180 * (Mathf.Acos ((grelativePos.x) / (-mPlanet.radius * Mathf.Cos (LAT))))) / Mathf.PI;
+		float longitude1 = (180 * (Mathf.Asin((grelativePos.z) / (mPlanet.radius * Mathf.Cos(LAT))))) / Mathf.PI;	//There are two possible solutions for longitude, compare these by re-entering them to the XYZ formula
+		float longitude2 = (180 * (Mathf.Acos((grelativePos.x) / (-mPlanet.radius * Mathf.Cos(LAT))))) / Mathf.PI;
 		
 		float LON1 = longitude1 * Mathf.PI / 180;
 		float LON2 = longitude2 * Mathf.PI / 180;
@@ -366,13 +379,13 @@ public class QuadPlane : MonoBehaviour
 		testVector1.x = -mPlanet.radius * Mathf.Cos(LAT) * Mathf.Cos(LON1);
 		testVector1.y = mPlanet.radius * Mathf.Sin(LAT);
 		testVector1.z = mPlanet.radius * Mathf.Cos(LAT) * Mathf.Sin(LON1);
-		testVector1 = testVector1 + mPlanet.Position;
+		testVector1 += mPlanet.Position;
 		
-		Vector3 testVector2 = new Vector3 ();
-		testVector2.x = -mPlanet.radius * Mathf.Cos (LAT) * Mathf.Cos (LON2);
-		testVector2.y = mPlanet.radius * Mathf.Sin (LAT);
-		testVector2.z = mPlanet.radius * Mathf.Cos (LAT) * Mathf.Sin (LON2);
-		testVector2 = testVector2 + mPlanet.Position;
+		Vector3 testVector2 = new Vector3();
+		testVector2.x = -mPlanet.radius * Mathf.Cos(LAT) * Mathf.Cos(LON2);
+		testVector2.y = mPlanet.radius * Mathf.Sin(LAT);
+		testVector2.z = mPlanet.radius * Mathf.Cos(LAT) * Mathf.Sin(LON2);
+		testVector2 += mPlanet.Position;
 		
 		testVector1.x = Mathf.Round(testVector1.x);
 		testVector1.y = Mathf.Round(testVector1.y);
@@ -382,7 +395,7 @@ public class QuadPlane : MonoBehaviour
 		testVector2.y = Mathf.Round(testVector2.y);
 		testVector2.z = Mathf.Round(testVector2.z);
 		
-		Vector3 testpos = new Vector3 ();
+		Vector3 testpos = new Vector3();
 		testpos.x = Mathf.Round(transform.TransformPoint(mMesh.vertices[60]).x);
 		testpos.y = Mathf.Round(transform.TransformPoint(mMesh.vertices[60]).y);
 		testpos.z = Mathf.Round(transform.TransformPoint(mMesh.vertices[60]).z);
@@ -393,13 +406,13 @@ public class QuadPlane : MonoBehaviour
 			{
 				if (testpos.z > testVector1.z - 10f && testpos.z < testVector1.z + 10f) 
 				{
-					longitude = longitude1;
+					mLongitude = longitude1;
 				}
 			}
 		} 
 		else 
 		{
-			longitude = longitude2;
+			mLongitude = longitude2;
 		}
 		
 		mMesh.RecalculateBounds();
@@ -409,29 +422,22 @@ public class QuadPlane : MonoBehaviour
 		if (timesSplit < splitCount) 
 		{	
 			timesSplit += 1;
-			InitialSplit ();
+			InitialSplit();
 		}
 
-		isLoaded = true;
-		gameObject.name = ("Quad " + Mathf.Round (latitude).ToString () + " " + Mathf.Round (longitude).ToString ());
+		gameObject.name = "Quad " + Mathf.Round(mLatitude).ToString() + " " + Mathf.Round(mLongitude).ToString();
 	}
-	
-	// Update is called once per frame
-	void Update ()
+
+	void Update()
 	{
 		if (Input.GetKeyDown (KeyCode.T)) 
 		{
-			SplitQuad ();
+			SplitQuad();
 		}
 	 	
-		renderer.material.SetVector("v3LightPos", PlanetUtilityComponent.Instance.Sun.transform.forward * -1.0f);
-
-		if (GeometryUtility.TestPlanesAABB(PlanetUtilityComponent.Instance.FrustumPlanes, mMesh.bounds)) 
-		{
-			//Debug.Log("plane at" + transform.position.ToString() + "within bounds");
-		}		
+		renderer.material.SetVector("v3LightPos", PlanetUtilityComponent.Instance.Sun.transform.forward * -1.0f);	
 	
-		if ((transform.TransformPoint (mMesh.vertices [60]) - PlanetUtilityComponent.Instance.CameraPosition).magnitude < mMaxDistance) 
+		if ((transform.TransformPoint(mMesh.vertices[60]) - PlanetUtilityComponent.Instance.CameraPosition).magnitude < mMaxDistance) 
 		{
 			camTimeWithin += Time.deltaTime;
 			
@@ -439,23 +445,25 @@ public class QuadPlane : MonoBehaviour
 			{
 				if (beginTesting == true) 
 				{
-					if (GeometryUtility.TestPlanesAABB(PlanetUtilityComponent.Instance.FrustumPlanes, renderer.bounds)) 
+					Plane[] frustumPlanes = GeometryUtility.CalculateFrustumPlanes(PlanetUtilityComponent.Instance.MainCamera);
+
+					if (GeometryUtility.TestPlanesAABB(frustumPlanes, renderer.bounds)) 
 					{
-						if (mScaleFactor < ((5 / mPlanet.radius) * (512))) 
+						if (mScaleFactor < (mPlanet.ScaleFactor * 512)) 
 						{
-							SplitQuad ();
+							SplitQuad();
 						}
 					}
 				}
 			}
 		}
 
-		if ((transform.TransformPoint(mMesh.vertices [60]) - PlanetUtilityComponent.Instance.CameraPosition).magnitude > mMaxDistance) 
+		if ((transform.TransformPoint(mMesh.vertices[60]) - PlanetUtilityComponent.Instance.CameraPosition).magnitude > mMaxDistance) 
 		{
 			camTimeWithin = 0f;
 		}
 
-		if ((transform.TransformPoint(mMesh.vertices [60]) - PlanetUtilityComponent.Instance.CameraPosition).magnitude > 4f * mMaxDistance) 
+		if ((transform.TransformPoint(mMesh.vertices[60]) - PlanetUtilityComponent.Instance.CameraPosition).magnitude > 4f * mMaxDistance) 
 		{			
 			if (beginTesting == true) 
 			{
@@ -508,6 +516,6 @@ public class QuadPlane : MonoBehaviour
 
 		plane.renderer.material.SetTexture("_DetailTex", PlanetUtilityComponent.Instance.BumpTexture);
 		plane.renderer.material.SetTexture("_DetailTex2", PlanetUtilityComponent.Instance.GBumpTexture);
-		plane.renderer.material.SetFloat("_MultTest", (4096) / (Mathf.Pow (2, timesSplit - 1)));
+		plane.renderer.material.SetFloat("_MultTest", (4096) / (Mathf.Pow(2, timesSplit - 1)));
 	}
 }

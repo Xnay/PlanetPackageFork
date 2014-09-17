@@ -12,9 +12,9 @@ public class PlanetUtilityComponent : SingletonBehaviour<PlanetUtilityComponent>
 	private Texture2D mBumpTexture;
 	private Texture2D mGBumpTexture;
 
-	public Plane[] FrustumPlanes
+	public Camera MainCamera
 	{
-		get { return mFrustumPlanes; }
+		get { return mCamera; }
 	}
 
 	public Vector3 CameraPosition
@@ -52,10 +52,5 @@ public class PlanetUtilityComponent : SingletonBehaviour<PlanetUtilityComponent>
 
 		mBumpTexture = (Texture2D)Resources.Load("Models/Bump");
 		mGBumpTexture = (Texture2D)Resources.Load("Models/Gbumb");
-	}
-
-	void Update()
-	{
-		mFrustumPlanes = GeometryUtility.CalculateFrustumPlanes(Camera.main);
 	}
 }
